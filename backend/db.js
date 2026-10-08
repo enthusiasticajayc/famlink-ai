@@ -3,8 +3,14 @@ const { Pool } = require('pg');
 let connectionString = process.env.DATABASE_URL;
 
 if (connectionString) {
-  // Remove sslmode query parameter from URL so pg options object controls SSL behavior
-  connectionString = connectionString.replace(/([?&])sslmode=[^&]*/gi, '');
+  try {
+    const parsedUrl = new URL(connectionString);
+    parsedUrl.searchParams.delete('sslmode');
+    parsedUrl.searchParams.delete('channel_binding');
+    connectionString = parsedUrl.toString();
+  } catch (err) {
+    // If not a standard URL string, keep original connectionString
+  }
 }
 
 const pool = new Pool({
