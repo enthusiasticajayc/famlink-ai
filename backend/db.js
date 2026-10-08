@@ -1,7 +1,11 @@
 const { Pool } = require('pg');
 
-// Fix SSL mode warning for Neon / cloud Postgres connections
-const connectionString = process.env.DATABASE_URL;
+let connectionString = process.env.DATABASE_URL;
+
+if (connectionString) {
+  // Replace sslmode parameter to silence pg-connection-string deprecation warning
+  connectionString = connectionString.replace(/([?&])sslmode=[^&]+/i, '$1sslmode=verify-full');
+}
 
 const pool = new Pool({
   connectionString,
