@@ -3,8 +3,8 @@ const { Pool } = require('pg');
 let connectionString = process.env.DATABASE_URL;
 
 if (connectionString) {
-  // Replace sslmode parameter to silence pg-connection-string deprecation warning
-  connectionString = connectionString.replace(/([?&])sslmode=[^&]+/i, '$1sslmode=verify-full');
+  // Remove sslmode query parameter from URL so pg options object controls SSL behavior
+  connectionString = connectionString.replace(/([?&])sslmode=[^&]*/gi, '');
 }
 
 const pool = new Pool({
